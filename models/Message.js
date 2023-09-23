@@ -14,6 +14,10 @@ const Message = mongoose.model("Message", new Schema(
 		receiver: {
 			type: String,
 			require: true
+		},
+		fakeName: {
+			type: String,
+			require: false
 		}
 	},
 	{

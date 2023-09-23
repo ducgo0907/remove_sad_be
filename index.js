@@ -2,10 +2,11 @@ import express from 'express';
 import http from 'http';
 import * as dotvn from 'dotenv'
 import { Server } from 'socket.io';
-import { messageController } from './controller/index.js';
+import { messageController } from './controllers/index.js';
 import ConnectDB from './database/database.js';
 import router from './routes/index.js';
-import cors from 'cors'
+import cors from 'cors';
+import { authJWT } from './middleware/index.js';
 
 const app = express();
 app.use(express.json());
@@ -15,7 +16,9 @@ dotvn.config();
 const server = http.createServer(app);
 const socketIo = new Server(server, {
 	cors: {
-		origin: '*',
+		origin: 'http://localhost:3000', // Replace with the actual origin of your frontend
+		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+		credentials: true, // Enable credentials (important for cookies and authentication)
 	},
 });
 app.use(cors({
@@ -46,23 +49,25 @@ socketIo.on('connection', (socket) => {
 		socket.emit('connectedUsers', Object.keys(connectedUsers));
 	});
 
-	socket.on('privateMessage', async ({ sender, receiver, message }) => {
-		let receiverSocketId = connectedUsers['admin'];
-		if (sender === 'admin') {
+	socket.on('privateMessage', async ({ sender, receiver, message, fakeName }) => {
+		let receiverSocketId = connectedUsers['trungnqhe161514@fpt.edu.vn'];
+		if (sender === 'trungnqhe161514@fpt.edu.vn') {
 			receiverSocketId = connectedUsers[receiver];
 		}
 		if (receiverSocketId) {
 			try {
-				receiver = sender !== 'admin' ? 'admin' : receiver;
+				receiver = sender !== 'trungnqhe161514@fpt.edu.vn' ? 'trungnqhe161514@fpt.edu.vn' : receiver;
 				const savedMessage = await messageController.saveMessage({
 					sender,
 					receiver,
 					message,
+					fakeName
 				});
 				// Send the message to the receiver only
 				socketIo.to(receiverSocketId).emit('privateMessage', {
 					sender,
-					message, // Send the saved message object
+					message,
+					fakeName,
 				});
 			} catch (error) {
 				console.error('Error saving message to the database:', error);
@@ -87,7 +92,9 @@ socketIo.on('connection', (socket) => {
 	});
 });
 
-server.listen(3001, async () => {
+const PORT = process.env.PORT || 3001;
+
+server.listen(PORT, async () => {
 	await ConnectDB();
-	console.log(`Server is running on port: 3001`);
+	console.log(`Server is running on port: ${PORT}`);
 });

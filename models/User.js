@@ -1,5 +1,4 @@
 import mongoose, { ObjectId, Schema } from "mongoose";
-import isEmail from "validator/lib/isemail.js";
 
 const User = mongoose.model("User", new Schema({
 	id: ObjectId,
@@ -21,11 +20,7 @@ const User = mongoose.model("User", new Schema({
 	},
 	email: {
 		type: String,
-		require: true,
-		validate: {
-			validator: value => isEmail(value),
-			message: 'Email incorrect format.'
-		}
+		require: true
 	},
 	phoneNumber: {
 		type: String,

@@ -28,7 +28,29 @@ const getAllMessage = async (req, res) => {
 	}
 }
 
+const getListUser = async (req, res) => {
+	try {
+		const { adminID } = req.query;
+		const listUser = await messageRepository.getListUser({ adminID });
+		return res.status(200).json({ data: listUser })
+	} catch (error) {
+		return res.status(500).json({ error: error.toString() });
+	}
+}
+
+const getPylir = async (req, res) => {
+	try {
+		const pylir = await messageRepository.getPylir();
+		return res.status(200).json({ message: 'Get pylir successfully', data: pylir });
+	} catch (error) {
+		return res.status(500).json({ error: error.toString() });
+	}
+}
+
+
 export default {
 	saveMessage,
-	getAllMessage
+	getAllMessage,
+	getListUser,
+	getPylir
 }

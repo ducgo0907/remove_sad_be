@@ -24,10 +24,8 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
 		address,
 		activationCode
 	});
-	console.log("4");
 
 	const linkActivateCode = `http://localhost:3001/users/activate?email=${email}&activationCode=${activationCode}`;
-	console.log(linkActivateCode);
 	sendMail(linkActivateCode, email)
 		.then(() => {
 			console.log("Send mail successfully");
@@ -57,14 +55,10 @@ const login = async ({ email, password }) => {
 		if (!loginUser) {
 			throw new Error('User not found');
 		}
-		console.log(password, loginUser.password);
 		const passwordIsValid = bcrypt.compareSync(password, loginUser.password);
 
 		if (!passwordIsValid) {
-			return {
-				accessToken: null,
-				message: "Invalid password"
-			};
+			throw new Error ("Invalid password");
 		}
 		const jwtSecret = process.env.SECRET_KEY_JWT;
 		const token = jwt.sign({ id: loginUser._id, name: loginUser.name, email: loginUser.email, isActive: loginUser.isActive }, jwtSecret, {
@@ -72,7 +66,7 @@ const login = async ({ email, password }) => {
 			expiresIn: 86400
 		});
 		return {
-			id: loginUser.id,
+			id: loginUser._id,
 			name: loginUser.name,
 			email: loginUser.email,
 			isAdmin: loginUser.isAdmin,

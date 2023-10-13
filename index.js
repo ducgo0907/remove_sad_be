@@ -6,7 +6,7 @@ import { messageController } from './controllers/index.js';
 import ConnectDB from './database/database.js';
 import router from './routes/index.js';
 import cors from 'cors';
-import { authJWT } from './middleware/index.js';
+import getRandomProperty from './util/getRandomProperty.js';
 
 const app = express();
 app.use(express.json());
@@ -35,7 +35,7 @@ app.use(router);
 
 // Keep track of connected users
 const connectedUsers = {};
-
+const connectedAdmin = {};
 socketIo.on('connection', (socket) => {
 	console.log('New client connected', socket.id);
 
@@ -44,19 +44,29 @@ socketIo.on('connection', (socket) => {
 		connectedUsers[userId] = socket.id;
 	});
 
+	socket.on('storeAdminId', (adminId) => {
+		connectedAdmin[adminId] = socket.id;
+	});
+
+	socket.on('getConnectedAdmin', () => {
+		console.log(connectedAdmin);
+		socket.emit('getConnectedAdmin', Object.keys(connectedAdmin));
+	})
+
 	// Send the list of connected users to the client
 	socket.on('getConnectedUsers', () => {
 		socket.emit('connectedUsers', Object.keys(connectedUsers));
 	});
 
 	socket.on('privateMessage', async ({ sender, receiver, message, fakeName }) => {
-		let receiverSocketId = connectedUsers['trungnqhe161514@fpt.edu.vn'];
-		if (sender === 'trungnqhe161514@fpt.edu.vn') {
+		const randomPilyr = getRandomProperty(connectedAdmin);
+		let receiverSocketId = randomPilyr.value;
+		if (connectedAdmin[sender]) {
 			receiverSocketId = connectedUsers[receiver];
 		}
 		if (receiverSocketId) {
 			try {
-				receiver = sender !== 'trungnqhe161514@fpt.edu.vn' ? 'trungnqhe161514@fpt.edu.vn' : receiver;
+				receiver = connectedAdmin[sender] ? receiver : randomPilyr.key;
 				const savedMessage = await messageController.saveMessage({
 					sender,
 					receiver,

@@ -1,12 +1,13 @@
 import Message from "../models/Message.js";
 import { messageRepository } from "../repositories/index.js";
 
-const saveMessage = async ({ sender, receiver, message, fakeName }) => {
+const saveMessage = async ({ sender, receiver, message, fakeName, isAdmin }) => {
 	const newMessage = await Message.create({
 		sender,
 		receiver,
 		message,
-		fakeName
+		fakeName,
+		isAdmin
 	});
 
 	return {

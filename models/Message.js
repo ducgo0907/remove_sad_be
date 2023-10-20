@@ -18,6 +18,10 @@ const Message = mongoose.model("Message", new Schema(
 		fakeName: {
 			type: String,
 			require: false
+		},
+		isAdmin: {
+			type: Boolean,
+			require: true
 		}
 	},
 	{

@@ -4,12 +4,12 @@ import authJwt from '../middleware/authJwt.js';
 
 const messageRouter = express.Router();
 
-messageRouter.get('/all', [authJwt.verifyToken], messageController.getAllMessage);
+messageRouter.get('/all', messageController.getAllMessage);
 
 messageRouter.post('/save', authJwt.verifyToken, messageController.saveMessage);
 
 messageRouter.get('/listUser', [authJwt.verifyToken, authJwt.isAdmin], messageController.getListUser);
 
-messageRouter.get('/getPylir', [authJwt.verifyToken], messageController.getPylir );
+messageRouter.get('/getPylir', messageController.getPylir);
 
 export default messageRouter;

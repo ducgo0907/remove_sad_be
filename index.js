@@ -35,22 +35,43 @@ app.use(router);
 
 // Keep track of connected users
 const connectedUsers = {};
-const connectedAdmin = {};
+let listUser = [];
 socketIo.on('connection', (socket) => {
 	console.log('New client connected', socket.id);
 
 	// Store the user's socket ID when they connect
-	socket.on('storeUserId', (userId) => {
-		connectedUsers[userId] = socket.id;
+	socket.on('storeUserId', ({ userId, isAdmin, username }) => {
+		connectedUsers[`${userId}`] = socket.id;
+		if (!isAdmin) {
+			const userExisted = listUser.find(u => u.email === userId);
+			if (!userExisted)
+				listUser.push({ email: userId, name: username });
+			socketIo.emit("getListUserPending", listUser);
+		}
 	});
 
-	socket.on('storeAdminId', (adminId) => {
-		connectedAdmin[adminId] = socket.id;
-	});
 
-	socket.on('getConnectedAdmin', () => {
-		console.log(connectedAdmin);
-		socket.emit('getConnectedAdmin', Object.keys(connectedAdmin));
+	// socket.on('storeAdminId', (adminId) => {
+	// 	connectedAdmin[adminId] = socket.id;
+	// });
+
+	// socket.on('getConnectedAdmin', () => {
+	// 	console.log(connectedAdmin);
+	// 	socket.emit('getConnectedAdmin', Object.keys(connectedAdmin));
+	// })
+
+
+	socket.on("connectedWithUser", ({admin, user}) => {
+		console.log(admin, user);
+		let receiverSocketId = connectedUsers[user];
+		socketIo.to(receiverSocketId).emit("getAdminId", admin);
+		socketIo.to(receiverSocketId).emit('privateMessage', {
+			sender: admin,
+			message: "Hi, welcome to pylir!",
+			isAdmin: true
+		});
+		listUser = listUser.filter(us => us.email !== user);
+		socketIo.emit("getListUserPending", listUser);
 	})
 
 	// Send the list of connected users to the client
@@ -58,26 +79,26 @@ socketIo.on('connection', (socket) => {
 		socket.emit('connectedUsers', Object.keys(connectedUsers));
 	});
 
-	socket.on('privateMessage', async ({ sender, receiver, message, fakeName }) => {
-		const randomPilyr = getRandomProperty(connectedAdmin);
-		let receiverSocketId = randomPilyr.value;
-		if (connectedAdmin[sender]) {
-			receiverSocketId = connectedUsers[receiver];
-		}
+	socket.on('privateMessage', async ({ sender, receiver, message, fakeName, isAdmin }) => {
+		let receiverSocketId = connectedUsers[receiver];
+		// if (sender == 'trungnqhe161514@fpt.edu.vn') {
+		// 	receiverSocketId = connectedUsers[receiver];
+		// }
 		if (receiverSocketId) {
 			try {
-				receiver = connectedAdmin[sender] ? receiver : randomPilyr.key;
 				const savedMessage = await messageController.saveMessage({
 					sender,
 					receiver,
 					message,
-					fakeName
+					fakeName,
+					isAdmin
 				});
 				// Send the message to the receiver only
 				socketIo.to(receiverSocketId).emit('privateMessage', {
 					sender,
 					message,
 					fakeName,
+					isAdmin
 				});
 			} catch (error) {
 				console.error('Error saving message to the database:', error);
@@ -95,8 +116,10 @@ socketIo.on('connection', (socket) => {
 		const userId = Object.keys(connectedUsers).find(
 			(key) => connectedUsers[key] === socket.id
 		);
+		console.log(userId, "Asd");
 		if (userId) {
 			delete connectedUsers[userId];
+			listUser = listUser.filter(user => user.email !== userId);
 			console.log('User disconnected:', userId);
 		}
 	});

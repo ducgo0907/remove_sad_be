@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import sendMail from "../util/sendMail.js";
 
-const register = async ({ name, email, password, phoneNumber, address }) => {
+const register = async ({ name, email, password }) => {
 	// Kiem tra su ton tai cua User
 	const existingUser = await User.findOne({ email }).exec();
 	if (existingUser != null) {
@@ -20,19 +20,17 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
 		name,
 		email,
 		password: hashPassword,
-		phoneNumber,
-		address,
-		activationCode
+		isActive: true
 	});
 
-	const linkActivateCode = `http://localhost:3001/users/activate?email=${email}&activationCode=${activationCode}`;
-	sendMail(linkActivateCode, email)
-		.then(() => {
-			console.log("Send mail successfully");
-		})
-		.catch(error => {
-			throw new Error(error);
-		})
+	// const linkActivateCode = `${process.env.base_URL}users/activate?email=${email}&activationCode=${activationCode}`;
+	// sendMail(linkActivateCode, email)
+	// 	.then(() => {
+	// 		console.log("Send mail successfully");
+	// 	})
+	// 	.catch(error => {
+	// 		throw new Error(error);
+	// 	})
 	return {
 		...newUser,
 		password: 'Not Show'

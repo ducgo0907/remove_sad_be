@@ -22,14 +22,6 @@ const User = mongoose.model("User", new Schema({
 		type: String,
 		require: true
 	},
-	phoneNumber: {
-		type: String,
-		require: true
-	},
-	address: {
-		type: String,
-		require: false
-	},
 	isAdmin: {
 		type: Boolean,
 		default: false

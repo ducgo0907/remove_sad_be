@@ -8,10 +8,10 @@ const register = async (req, res) => {
 	}
 
 	// Destructuring Request Object
-	const { name, email, password, phoneNumber, address } = req.body;
+	const { name, email, password } = req.body;
 	try {
 		// Call action cua Repository (DAO)
-		const activeUser = await userRepository.register({ name, email, password, phoneNumber, address })
+		const activeUser = await userRepository.register({ name, email, password })
 		console.log(activeUser);
 		return res.status(201).json({ message: 'Register successfully.' })
 	} catch (error) {

@@ -16,13 +16,13 @@ dotvn.config();
 const server = http.createServer(app);
 const socketIo = new Server(server, {
 	cors: {
-		origin: ["https://ducgo0907.github.io", "http://localhost:3000"], // Replace with the actual origin of your frontend
+		origin: ["https://ducgo0907.github.io", "http://localhost:3000", "https://pylir.netlify.app"], // Replace with the actual origin of your frontend
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 		credentials: true, // Enable credentials (important for cookies and authentication)
 	},
 });
 app.use(cors({
-	origin: ["https://ducgo0907.github.io", "http://localhost:3000"], // Replace with the origin of your frontend
+	origin: ["https://ducgo0907.github.io", "http://localhost:3000", "https://pylir.netlify.app"], // Replace with the origin of your frontend
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 	credentials: true, // Enable credentials (if needed)
 }));

@@ -101,7 +101,8 @@ orderRouter.get('/vnpay_return', async function (req, res, next) {
 		//Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
 		console.log("Amount: ", vnp_Params['vnp_Amount']);
 		const user = await User.findById(userId);
-		user.money += parseInt(vnp_Params['vnp_Amount']) / 100;
+		const currentMoney = user.money ? user.money : 0;
+		user.money = currentMoney + parseInt(vnp_Params['vnp_Amount']) / 100;
 		await user.save();
 		res.redirect("http://localhost:3000/success");
 	} else {

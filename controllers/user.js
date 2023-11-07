@@ -60,9 +60,31 @@ const activateAccount = async (req, res) => {
 	}
 }
 
+const getMoney = async (req, res) => {
+	const userId = req.userID;
+	try {
+		const money = await userRepository.getMoney(userId);
+		return res.status(200).json({ money });
+	} catch (error) {
+		return res.status(500).json({ message: error.toString() })
+	}
+}
+
+const goToChat = async (req, res) => {
+	const userId = req.userID;
+	try{
+		const result = await userRepository.goToChat(userId);
+		return res.status(200).json(result);
+	}catch(error) {
+		return res.status(500).json(error.toString());
+	}
+}
+
 export default {
 	register,
 	getAllUser,
 	login,
-	activateAccount
+	activateAccount,
+	getMoney,
+	goToChat
 }

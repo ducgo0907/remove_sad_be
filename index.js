@@ -6,10 +6,12 @@ import { messageController } from './controllers/index.js';
 import ConnectDB from './database/database.js';
 import router from './routes/index.js';
 import cors from 'cors';
-import getRandomProperty from './util/getRandomProperty.js';
+import cookieParser from 'cookie-parser';
+import config from './config/config.js';
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 dotvn.config();
 
@@ -115,7 +117,6 @@ socketIo.on('connection', (socket) => {
 		const userId = Object.keys(connectedUsers).find(
 			(key) => connectedUsers[key] === socket.id
 		);
-		console.log(userId, "Asd");
 		if (userId) {
 			delete connectedUsers[userId];
 			listUser = listUser.filter(user => user.email !== userId);

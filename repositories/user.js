@@ -56,7 +56,7 @@ const login = async ({ email, password }) => {
 		const passwordIsValid = bcrypt.compareSync(password, loginUser.password);
 
 		if (!passwordIsValid) {
-			throw new Error ("Invalid password");
+			throw new Error("Invalid password");
 		}
 		const jwtSecret = process.env.SECRET_KEY_JWT;
 		const token = jwt.sign({ id: loginUser._id, name: loginUser.name, email: loginUser.email, isActive: loginUser.isActive }, jwtSecret, {
@@ -78,13 +78,13 @@ const login = async ({ email, password }) => {
 const activateAccount = async (email, activationCode) => {
 	try {
 		const activeUser = await User.findOne({ email }).select("-password").exec();
-		if(!activeUser){
+		if (!activeUser) {
 			throw new Error('User not existed');
 		}
-		if(activeUser.isActive){
+		if (activeUser.isActive) {
 			throw new Error('User already active!');
 		}
-		if(activeUser.activationCode == activationCode){
+		if (activeUser.activationCode == activationCode) {
 			activeUser.isActive = true;
 			activeUser.activationCode = '';
 		}
@@ -95,11 +95,29 @@ const activateAccount = async (email, activationCode) => {
 	}
 }
 
+const getMoney = async (userId) => {
+	const money = await User.findById(userId).select("money");
+	return money.money;
+}
+
+const goToChat = async (userId) => {
+	const user = await User.findById(userId);
+	if (user.money && user.money > 40000) {
+		user -= 40000;
+		await user.save();
+		return "Go to chat";
+	}else{
+		return "You don't have money";
+	}
+}
+
 // Actions wirk DB: ...
 
 export default {
 	register,
 	getAllUsers,
 	login,
-	activateAccount
+	activateAccount,
+	getMoney,
+	goToChat
 };

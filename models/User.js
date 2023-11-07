@@ -33,6 +33,11 @@ const User = mongoose.model("User", new Schema({
 	activationCode: {
 		type: String,
 		require: false
+	},
+	money: {
+		type: Number,
+		require: true,
+		default: 0
 	}
 }))
 

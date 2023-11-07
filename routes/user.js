@@ -1,6 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import { userController } from "../controllers/index.js";
+import authJwt from "../middleware/authJwt.js";
 
 const userRouter = express.Router();
 
@@ -10,8 +11,12 @@ userRouter.post("/register",
 	userController.register
 );
 
+userRouter.get("/money", authJwt.verifyToken, userController.getMoney);
+
 userRouter.post("/login", userController.login);
 
-userRouter.get("/activate" ,userController.activateAccount)
+userRouter.get("/activate" ,userController.activateAccount);
+
+userRouter.post("/goToChat", authJwt.verifyToken, userController.goToChat);
 
 export default userRouter;

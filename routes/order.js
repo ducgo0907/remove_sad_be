@@ -104,10 +104,10 @@ orderRouter.get('/vnpay_return', async function (req, res, next) {
 		const currentMoney = user.money ? user.money : 0;
 		user.money = currentMoney + parseInt(vnp_Params['vnp_Amount']) / 100;
 		await user.save();
-		res.redirect("http://localhost:3000/success");
+		res.redirect("https://pylir.netlify.app/success");
 	} else {
 		console.log("Vao day");
-		res.redirect("http://localhost:3000/failed");
+		res.redirect("https://pylir.netlify.app/failed");
 	}
 });
 

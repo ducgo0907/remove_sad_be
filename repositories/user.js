@@ -102,7 +102,7 @@ const getMoney = async (userId) => {
 
 const goToChat = async (userId) => {
 	const user = await User.findById(userId);
-	if (user.money && user.money > 40000) {
+	if (user.money && user.money >= 40000) {
 		user -= 40000;
 		await user.save();
 		return "Go to chat";

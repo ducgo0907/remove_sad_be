@@ -12,4 +12,6 @@ messageRouter.get('/listUser', [authJwt.verifyToken, authJwt.isAdmin], messageCo
 
 messageRouter.get('/getPylir', messageController.getPylir);
 
+messageRouter.delete('/deleteMessage', messageController.deleteMessage);
+
 export default messageRouter;

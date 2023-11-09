@@ -53,8 +53,17 @@ const getPylir = async () => {
 	}
 }
 
+const deleteMessage = async (user) => {
+	try {
+	  await Message.deleteMany({ $or: [{ sender: user }, { receiver: user }] });
+	} catch (error) {
+	  throw new Error(error.toString());
+	}
+  }
+
 export default {
 	getAllMessage,
 	getListUser,
-	getPylir
+	getPylir,
+	deleteMessage
 }

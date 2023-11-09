@@ -48,10 +48,21 @@ const getPylir = async (req, res) => {
 	}
 }
 
+const deleteMessage = async (req, res) => {
+	const {user} = req.query;
+	try {
+		await messageRepository.deleteMessage(user);
+		return res.status(200).json("Delete successfully");
+	}catch(error) {
+		return res.status(500).json({ error: error.toString() });
+	}
+}
+
 
 export default {
 	saveMessage,
 	getAllMessage,
 	getListUser,
-	getPylir
+	getPylir,
+	deleteMessage
 }

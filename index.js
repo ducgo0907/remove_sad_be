@@ -52,6 +52,10 @@ socketIo.on('connection', (socket) => {
 		}
 	});
 
+	socket.on('getListUserPendingInit', (data) => {
+		socketIo.emit("getListUserPending", listUser);
+	})
+
 
 	// socket.on('storeAdminId', (adminId) => {
 	// 	connectedAdmin[adminId] = socket.id;

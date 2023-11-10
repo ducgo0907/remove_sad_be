@@ -67,11 +67,17 @@ socketIo.on('connection', (socket) => {
 	// })
 
 
-	socket.on("connectedWithUser", ({admin, user}) => {
+	socket.on("connectedWithUser", async ({admin, user}) => {
 		let receiverSocketId = connectedUsers[user];
 		socketIo.to(receiverSocketId).emit("getAdminId", admin);
 		socketIo.to(receiverSocketId).emit('privateMessage', {
 			sender: admin,
+			message: "Hi, welcome to pylir!",
+			isAdmin: true
+		});
+		await messageController.saveMessage({
+			sender: admin,
+			receiver: user,
 			message: "Hi, welcome to pylir!",
 			isAdmin: true
 		});

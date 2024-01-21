@@ -37,9 +37,7 @@ async function findPylirWithFreeTime(userIds, timeStart, timeEnd) {
 // Create a schedule for a pylir with free time
 async function createSchedule({timeStart, timeEnd, customerId}) {
 	const pylirs = await User.find({ isAdmin: true }); // Assuming you have a User model
-	console.log("1");
 	const pylirIdWithFreeTime = await findPylirWithFreeTime(pylirs.map(user => user._id), timeStart, timeEnd);
-	console.log("2");
 	if (pylirIdWithFreeTime) {
 		const newSchedule = new Schedule({
 			pylir: pylirIdWithFreeTime,

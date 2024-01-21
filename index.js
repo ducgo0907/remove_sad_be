@@ -49,7 +49,7 @@ socketIo.on('connection', (socket) => {
 			if (!userExisted)
 				listUser.push({ email: userId, name: username });
 			socketIo.emit("getListUserPending", listUser);
-		}
+		} 
 	});
 
 	socket.on('getListUserPendingInit', (data) => {

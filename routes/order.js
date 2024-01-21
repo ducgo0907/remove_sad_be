@@ -5,6 +5,7 @@ import QueryString from 'qs';
 import crypto from 'crypto';
 import authJwt from '../middleware/authJwt.js';
 import User from '../models/User.js';
+import { orderController } from '../controllers/index.js';
 const orderRouter = express.Router();
 
 orderRouter.post('/create_payment_url', authJwt.verifyToken, function (req, res) {
@@ -81,10 +82,7 @@ function sortObject(obj) {
 
 orderRouter.get('/vnpay_return', async function (req, res, next) {
 	let vnp_Params = req.query;
-	console.log(vnp_Params);
-
 	let secureHash = vnp_Params['vnp_SecureHash'];
-
 	delete vnp_Params['vnp_SecureHash'];
 	delete vnp_Params['vnp_SecureHashType'];
 
@@ -106,10 +104,12 @@ orderRouter.get('/vnpay_return', async function (req, res, next) {
 		await user.save();
 		res.redirect("https://pilyr.netlify.app/success");
 	} else {
-		console.log("Vao day");
 		res.redirect("https://pilyr.netlify.app/failed");
 	}
 });
+
+orderRouter.post("/create", [authJwt.verifyToken], orderController.createOrder);
+orderRouter.post("/charge", orderController.charge)
 
 
 export default orderRouter;

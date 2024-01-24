@@ -17,6 +17,8 @@ userRouter.post("/login", userController.login);
 
 userRouter.get("/activate" ,userController.activateAccount);
 
-userRouter.post("/goToChat", authJwt.verifyToken, userController.goToChat);
+userRouter.post("/goToChat", userController.goToChat);
+
+userRouter.post("/checkExsitedChat", userController.checkExistedChat);
 
 export default userRouter;

@@ -70,10 +70,21 @@ const getMoney = async (req, res) => {
 	}
 }
 
-const goToChat = async (req, res) => {
-	const userId = req.userID;
+
+const checkExistedChat = async (req, res) => {
+	const {email} = req.body;
 	try{
-		const result = await userRepository.goToChat(userId);
+		const result = await userRepository.checkExistedChat(email);
+		return res.status(200).json(result);
+	}catch(error) {
+		return res.status(500).json(error.toString());
+	}
+}
+
+const goToChat = async (req, res) => {
+	const {isFree, email} = req.body;
+	try{
+		const result = await userRepository.goToChat(isFree, email);
 		return res.status(200).json(result);
 	}catch(error) {
 		return res.status(500).json(error.toString());
@@ -86,5 +97,6 @@ export default {
 	login,
 	activateAccount,
 	getMoney,
-	goToChat
+	goToChat,
+	checkExistedChat
 }

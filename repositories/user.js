@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import sendMail from "../util/sendMail.js";
+import Chat from "../models/Chat.js";
 
 const register = async ({ name, email, password }) => {
 	// Kiem tra su ton tai cua User
@@ -100,14 +101,30 @@ const getMoney = async (userId) => {
 	return money.money;
 }
 
-const goToChat = async (userId) => {
-	const user = await User.findById(userId);
-	if (user.money && user.money >= 40000) {
-		user.money -= 40000;
+const checkExistedChat = async (email) => {
+	const currentTime = new Date();
+	const timeThreshold = new Date(currentTime - 20 * 60 * 1000); // 20 minutes ago
+	const existedChat = await Chat.findOne({timeStart: { $gt: timeThreshold }, user: email}).exec();
+	if(existedChat){
+		return existedChat;
+	}else {
+		return {status: 0};
+	}
+}
+
+const goToChat = async (isFree, email) => {
+	const user = await User.findOne({email: email}).exec();
+	if (!user && isFree) {
+		const newChat = await Chat.create({ user: email, timeStart: new Date() });
+		return newChat;
+	}
+	if ((user && user.money && user.money >= 20000)) {
+		const newChat = await Chat.create({ user: email, timeStart: new Date() });
+		user.money -= 20000;
 		await user.save();
-		return "Go to chat";
-	}else{
-		return "You don't have money";
+		return newChat;
+	} else {
+		return { status: 0 };
 	}
 }
 
@@ -119,5 +136,6 @@ export default {
 	login,
 	activateAccount,
 	getMoney,
-	goToChat
+	goToChat,
+	checkExistedChat
 };

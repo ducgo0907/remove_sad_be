@@ -21,4 +21,6 @@ userRouter.post("/goToChat", userController.goToChat);
 
 userRouter.post("/checkExsitedChat", userController.checkExistedChat);
 
+userRouter.post("/genGuest", userController.genGuest)
+
 export default userRouter;

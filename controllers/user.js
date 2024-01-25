@@ -91,6 +91,15 @@ const goToChat = async (req, res) => {
 	}
 }
 
+const genGuest = async (req,res) => {
+	try{
+		const result = await userRepository.genGuest();
+		return res.status(200).json(result);
+	}catch(error){
+		return res.status(500).json(error.toString());
+	}
+}
+
 export default {
 	register,
 	getAllUser,
@@ -98,5 +107,6 @@ export default {
 	activateAccount,
 	getMoney,
 	goToChat,
-	checkExistedChat
+	checkExistedChat,
+	genGuest
 }

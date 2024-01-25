@@ -32,6 +32,7 @@ const getAllMessage = async (req, res) => {
 const getListUser = async (req, res) => {
 	try {
 		const { adminID } = req.query;
+		console.log("admin", adminID);
 		const listUser = await messageRepository.getListUser({ adminID });
 		return res.status(200).json({ data: listUser })
 	} catch (error) {

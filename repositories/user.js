@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import sendMail from "../util/sendMail.js";
 import Chat from "../models/Chat.js";
+import Message from "../models/Message.js";
 
 const register = async ({ name, email, password }) => {
 	// Kiem tra su ton tai cua User
@@ -128,6 +129,28 @@ const goToChat = async (isFree, email) => {
 	}
 }
 
+const genGuest = async () => {
+	let userId = "Khách-" + makeid(10);
+	const message = await Message.find({$or: [{sender: userId}, {receiver: userId}]});
+	if(message.length > 0){
+		userId = "Khách-" + makeid(10);
+		return userId;
+	}
+	return userId;
+}
+
+function makeid(length) {
+	let result = '';
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+	let counter = 0;
+	while (counter < length) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		counter += 1;
+	}
+	return result;
+}
+
 // Actions wirk DB: ...
 
 export default {
@@ -137,5 +160,6 @@ export default {
 	activateAccount,
 	getMoney,
 	goToChat,
-	checkExistedChat
+	checkExistedChat,
+	genGuest
 };

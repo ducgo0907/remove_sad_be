@@ -4,8 +4,8 @@ import { orderRepository } from "../repositories/index.js";
 const createOrder = async (req, res) => {
     try {
         const userId = req.userID;
-        const { money } = req.body;
-        const result = await orderRepository.createOrder(userId, money);
+        const { money, type } = req.body;
+        const result = await orderRepository.createOrder(userId, money, type);
         return res.status(200).json(result);
     } catch (error) {
         return res.status(500).json({
@@ -15,17 +15,30 @@ const createOrder = async (req, res) => {
 }
 
 const charge = async (req, res) => {
-    const {content} = req.body;
-    try{
+    const { content } = req.body;
+    try {
         const result = await orderRepository.charge(content);
         return res.status(200).json(result);
-    }catch(error){
+    } catch (error) {
         console.log("error: ", error);
+        return res.status(500).json(error.toString());
+    }
+}
+
+const getOrderByDate = async (req, res) => {
+    console.log("123", req.query);
+    const { dateFrom, dateTo, type } = req.query;
+    try {
+        const result = await orderRepository.getDataByTypeAndDate(type, dateFrom, dateTo);
+        console.log(result, "result");
+        return res.status(200).json(result);
+    } catch (error) {
         return res.status(500).json(error.toString());
     }
 }
 
 export default {
     createOrder,
-    charge
+    charge, 
+    getOrderByDate
 }

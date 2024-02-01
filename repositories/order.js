@@ -2,15 +2,17 @@ import Order from "../models/Order.js";
 import User from "../models/User.js";
 
 
-const createOrder = async (userId, money) => {
+const createOrder = async (userId, money, type) => {
     const orderCode = generateRandomString(5);
     try {
         const order = await Order.create({
             user: userId,
             code: orderCode,
             money: money,
-            status: "PENDING"
+            status: "PENDING",
+            type: type
         });
+        console.log("order", order);
         return {
             mesage: "Khởi tạo đơn hàng thành công",
             content: order,
@@ -27,7 +29,7 @@ const charge = async (content) => {
         console.log(1)
         if (content == null || content == undefined || content == '') {
             throw new Error("Nội dung đang bị rỗng");
-        } 
+        }
         const amount = extractSubstring(content, "Số tiền: +", "VND.")
         const rawCode = extractSubstring(content, "Nội dung giao dịch: ", ".CT")
         const amountNumber = convertMoney(amount);
@@ -45,7 +47,8 @@ const charge = async (content) => {
         const user = await User.findById(order.user);
         user.money += amountNumber;
         await user.save();
-        console.log("user: ", user);
+        order.status = "FINISHED";
+        await order.save();
         return {
             message: "Nạp tiền thành công",
             statusCode: 1
@@ -53,6 +56,29 @@ const charge = async (content) => {
     } catch (error) {
         return error.toString();
     }
+}
+
+const getDataByTypeAndDate = async (type, dateFrom, dateTo) => {
+    try {
+        const fromDate = new Date(dateFrom);
+        const endDate = new Date(dateTo);
+        const listData = await Order.find({
+            createdAt: {
+                $gte: fromDate,
+                $lte: endDate
+            },
+            type,
+            status: "FINISHED"
+        });
+        return {
+            message: "Get data success",
+            statusCode: 1,
+            data: listData
+        }
+    } catch (error) {
+        console.log("error", error);
+    }
+
 }
 
 function convertMoney(inputString) {
@@ -93,5 +119,6 @@ function generateRandomString(length) {
 
 export default {
     createOrder,
-    charge
+    charge,
+    getDataByTypeAndDate
 }

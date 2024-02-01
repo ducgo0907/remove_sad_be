@@ -109,7 +109,7 @@ orderRouter.get('/vnpay_return', async function (req, res, next) {
 });
 
 orderRouter.post("/create", [authJwt.verifyToken], orderController.createOrder);
-orderRouter.post("/charge", orderController.charge)
-
+orderRouter.post("/charge", orderController.charge);
+orderRouter.get("/getData", orderController.getOrderByDate)
 
 export default orderRouter; 

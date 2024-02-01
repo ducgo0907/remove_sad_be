@@ -18,6 +18,11 @@ const Order = mongoose.model("Order", new Schema(
 		status: {
 			type: String,
 			require: true
+		},
+		type: {
+			type: String,
+			require: false,
+			default: "CUSTOM"
 		}
 	},
 	{

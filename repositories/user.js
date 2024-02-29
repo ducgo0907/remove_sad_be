@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import sendMail from "../util/sendMail.js";
 import Chat from "../models/Chat.js";
 import Message from "../models/Message.js";
+import Item from "../models/Item.js";
 
 const register = async ({ name, email, password }) => {
 	// Kiem tra su ton tai cua User
@@ -99,7 +100,11 @@ const activateAccount = async (email, activationCode) => {
 
 const getMoney = async (userId) => {
 	const money = await User.findById(userId).select("money");
-	return money.money;
+	const items = await Item.findOne({item: "meeting_ticket", user: userId});
+	return {
+		money: money.money,
+		item: items
+	};
 }
 
 const checkExistedChat = async (email) => {

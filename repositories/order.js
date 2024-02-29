@@ -1,9 +1,10 @@
+import Item from "../models/Item.js";
 import Order from "../models/Order.js";
 import User from "../models/User.js";
 
 
 const createOrder = async (userId, money, type) => {
-    const orderCode = generateRandomString(5);
+    const orderCode = "PILYR-" + generateRandomString(5) + ";";
     try {
         const order = await Order.create({
             user: userId,
@@ -12,7 +13,6 @@ const createOrder = async (userId, money, type) => {
             status: "PENDING",
             type: type
         });
-        console.log("order", order);
         return {
             mesage: "Khởi tạo đơn hàng thành công",
             content: order,
@@ -31,19 +31,30 @@ const charge = async (content) => {
             throw new Error("Nội dung đang bị rỗng");
         }
         const amount = extractSubstring(content, "Số tiền: +", "VND.")
-        const rawCode = extractSubstring(content, "Nội dung giao dịch: ", ".CT")
+        const rawCode = extractSubstring(content, "PILYR-", ";")
         const amountNumber = convertMoney(amount);
-        const code = rawCode.slice(-5);
+        const code = "PILYR-" + rawCode + ";";
         if (!amount || !code) {
             throw new Error("Nội dung đang bị rỗng");
         }
-        console.log(8, code)
         const order = await Order.findOne({ code: code, status: "PENDING" });
         if (!order) {
             throw new Error("Phiếu mua không tồn tại");
         }
         console.log(9, amountNumber)
         console.log(order.user, 10);
+        if (order.type == "MEETING") {
+            const item = await Item.findOne({
+                item: "meeting_ticket",
+                user: user.id
+            });
+            if (!item) {
+                await Item.create({
+                    user: user.id,
+                    item: "meeting_ticket",
+                })
+            }
+        }
         const user = await User.findById(order.user);
         user.money += amountNumber;
         await user.save();
@@ -62,6 +73,8 @@ const getDataByTypeAndDate = async (type, dateFrom, dateTo) => {
     try {
         const fromDate = new Date(dateFrom);
         const endDate = new Date(dateTo);
+        endDate.setHours(23);
+        fromDate.setHours(0);
         const listData = await Order.find({
             createdAt: {
                 $gte: fromDate,
@@ -76,7 +89,7 @@ const getDataByTypeAndDate = async (type, dateFrom, dateTo) => {
             data: listData
         }
     } catch (error) {
-        console.log("error", error);
+        // console.log("error", error);
     }
 
 }

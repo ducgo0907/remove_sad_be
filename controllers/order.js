@@ -26,11 +26,13 @@ const charge = async (req, res) => {
 }
 
 const getOrderByDate = async (req, res) => {
-    console.log("123", req.query);
     const { dateFrom, dateTo, type } = req.query;
     try {
+        console.log(dateFrom, dateTo, type);
         const result = await orderRepository.getDataByTypeAndDate(type, dateFrom, dateTo);
-        console.log(result, "result");
+        if (type == "COMBO7") {
+            console.log(result);
+        }
         return res.status(200).json(result);
     } catch (error) {
         return res.status(500).json(error.toString());
@@ -39,6 +41,6 @@ const getOrderByDate = async (req, res) => {
 
 export default {
     createOrder,
-    charge, 
+    charge,
     getOrderByDate
 }

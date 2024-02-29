@@ -46,17 +46,17 @@ const charge = async (content) => {
         if (order.type == "MEETING") {
             const item = await Item.findOne({
                 item: "meeting_ticket",
-                user: user.id
+                user: order.user
             });
             if (!item) {
                 await Item.create({
-                    user: user.id,
+                    user: order.user,
                     item: "meeting_ticket",
                 })
             }
         }
         const user = await User.findById(order.user);
-        user.money += amountNumber;
+        user.money += order.money;
         await user.save();
         order.status = "FINISHED";
         await order.save();

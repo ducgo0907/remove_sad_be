@@ -38,11 +38,12 @@ const charge = async (content) => {
             throw new Error("Nội dung đang bị rỗng");
         }
         const order = await Order.findOne({ code: code, status: "PENDING" });
-        if (!order) {
+        if (!order) { 
             throw new Error("Phiếu mua không tồn tại");
         }
         console.log(9, amountNumber)
         console.log(order.user, 10);
+        console.log(order, 11);
         if (order.type == "MEETING") {
             const item = await Item.findOne({
                 item: "meeting_ticket",
@@ -52,14 +53,19 @@ const charge = async (content) => {
                 await Item.create({
                     user: order.user,
                     item: "meeting_ticket",
+                    amount: 1
                 })
+            }else {
+                item.amount += 1;
+                await item.save();
             }
+        }else {
+            const user = await User.findById(order.user);
+            user.money += order.money;
+            await user.save();
+            order.status = "FINISHED";
+            await order.save();
         }
-        const user = await User.findById(order.user);
-        user.money += order.money;
-        await user.save();
-        order.status = "FINISHED";
-        await order.save();
         return {
             message: "Nạp tiền thành công",
             statusCode: 1

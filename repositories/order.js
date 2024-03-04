@@ -4,7 +4,7 @@ import User from "../models/User.js";
 
 
 const createOrder = async (userId, money, type) => {
-    const orderCode = "PILYR-" + generateRandomString(5) + ";";
+    const orderCode = "PILYR" + generateRandomString(5) + "A";
     try {
         const order = await Order.create({
             user: userId,
@@ -31,9 +31,9 @@ const charge = async (content) => {
             throw new Error("Nội dung đang bị rỗng");
         }
         const amount = extractSubstring(content, "Số tiền: +", "VND.")
-        const rawCode = extractSubstring(content, "PILYR-", ";")
+        const rawCode = extractSubstring(content, "PILYR", "A")
         const amountNumber = convertMoney(amount);
-        const code = "PILYR-" + rawCode + ";";
+        const code = "PILYR" + rawCode + "A";
         if (!amount || !code) {
             throw new Error("Nội dung đang bị rỗng");
         }
@@ -125,7 +125,7 @@ function extractSubstring(inputString, startMarker, endMarker) {
 }
 
 function generateRandomString(length) {
-    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const characters = 'abcdefghijklmnopqrstuvwxyzBCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let randomString = '';
 
     for (let i = 0; i < length; i++) {

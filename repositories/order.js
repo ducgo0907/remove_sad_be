@@ -63,9 +63,9 @@ const charge = async (content) => {
             const user = await User.findById(order.user);
             user.money += order.money;
             await user.save();
-            order.status = "FINISHED";
-            await order.save();
         }
+        order.status = "FINISHED";
+        await order.save();
         return {
             message: "Nạp tiền thành công",
             statusCode: 1

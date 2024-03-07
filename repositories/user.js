@@ -71,7 +71,8 @@ const login = async ({ email, password }) => {
 			name: loginUser.name,
 			email: loginUser.email,
 			isAdmin: loginUser.isAdmin,
-			accessToken: token
+			accessToken: token,
+			isVipMember: loginUser.isVipMember
 		}
 	} catch (error) {
 		throw new Error(error);

@@ -44,6 +44,7 @@ const charge = async (content) => {
         console.log(9, amountNumber)
         console.log(order.user, 10);
         console.log(order, 11);
+        const user = await User.findById(order.user);
         if (order.type == "MEETING") {
             const item = await Item.findOne({
                 item: "meeting_ticket",
@@ -59,9 +60,17 @@ const charge = async (content) => {
                 item.amount += 1;
                 await item.save();
             }
-        }else {
-            const user = await User.findById(order.user);
+        }else if (order.type == "COMBO3") {
+            user.money += 60000;
+            await user.save();
+        }else if (order.type == "COMBO7"){
+            user.money += 140000;
+            await user.save();
+        }else if(order.type == "CUSTOM"){
             user.money += order.money;
+            await user.save();
+        }else if(order.type == "MEMBER"){
+            user.isVipMember = true;
             await user.save();
         }
         order.status = "FINISHED";

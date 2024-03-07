@@ -109,7 +109,9 @@ const getMoney = async (userId) => {
 
 const checkExistedChat = async (email) => {
 	const currentTime = new Date();
-	const timeThreshold = new Date(currentTime - 20 * 60 * 1000); // 20 minutes ago
+	const user = await User.findOne({email: email});
+	const time = user.isVipMember ? 30 : 20;
+	const timeThreshold = new Date(currentTime - time * 60 * 1000); // 20 minutes ago
 	const existedChat = await Chat.findOne({timeStart: { $gt: timeThreshold }, user: email}).exec();
 	if(existedChat){
 		return existedChat;

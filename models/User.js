@@ -38,6 +38,11 @@ const User = mongoose.model("User", new Schema({
 		type: Number,
 		require: true,
 		default: 0
+	},
+	isVipMember: {
+		type: Boolean,
+		require: true,
+		default: false
 	}
 }))
 

@@ -2,7 +2,7 @@ import Item from "../models/Item.js";
 import Meet from "../models/Meet.js"
 
 // Create a schedule for a pylir with free time
-async function create({ timeStart, timeEnd, userId, address }) {
+async function create({ timeStart, timeEnd, userId, address,phone }) {
     const item = await Item.findOne({ user: userId });
     if (item.amount <= 0) {
         return {
@@ -17,7 +17,8 @@ async function create({ timeStart, timeEnd, userId, address }) {
         timeStart,
         timeEnd,
         customer: userId,
-        address
+        address,
+        phone
     })
     return {
         statusCode: 1,

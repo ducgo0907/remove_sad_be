@@ -2,9 +2,9 @@ import { meetRepository } from "../repositories/index.js";
 
 async function create(req, res) {
     try {
-        const { timeStart, timeEnd, address } = req.body;
+        const { timeStart, timeEnd, address, phone } = req.body;
         const userId = req.userID;
-        const newMeeting = await meetRepository.create({ timeStart, timeEnd, address, userId })
+        const newMeeting = await meetRepository.create({ timeStart, timeEnd, address, userId, phone })
         res.status(200).json({ message: 'Create meeting successfully', data: newMeeting })
     } catch (error) {
         res.status(500).json({ message: error });

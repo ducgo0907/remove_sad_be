@@ -22,6 +22,10 @@ const Meet = mongoose.model("Meet", new Schema(
 		status: {
 			type: String,
 			default: "PENDING"
+		},
+		phone: {
+			type: String,
+			require: true
 		}
 	},
 	{
